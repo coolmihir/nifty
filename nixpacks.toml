@@ -1,0 +1,2 @@
+[start]
+cmd = "python nifty_oi_logger.py"
