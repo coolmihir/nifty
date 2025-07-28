@@ -3,11 +3,11 @@ import json
 import base64
 import time
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import requests
 from datetime import datetime
+from oauth2client.service_account import ServiceAccountCredentials
 
-# Step 1: Load credentials from Railway environment variable
+# Step 1: Decode Google credentials from base64 env variable
 print("🔐 Decoding credentials from GOOGLE_CREDS_B64...")
 creds_b64 = os.environ.get("GOOGLE_CREDS_B64")
 if not creds_b64:
@@ -22,10 +22,11 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 print("✅ Google Sheets authentication successful.")
 
-# Step 3: Open the target Google Sheet
+# Step 3: Open the spreadsheet using the sheet ID
 try:
-    sheet = client.open("NIFTY_OI_Logger").sheet1  # Make sure this sheet is shared with your service account!
-    print("📄 Opened Google Sheet: NIFTY_OI_Logger")
+    sheet_id = "1ggCFYxVU1x3uU3eHYlmaQUn2m1rtNs9j"
+    sheet = client.open_by_key(sheet_id).sheet1
+    print("📄 Opened Google Sheet successfully.")
 except Exception as e:
     print("❌ Failed to open Google Sheet:", str(e))
     raise e
@@ -50,7 +51,7 @@ except Exception as e:
     print("❌ Failed to fetch NSE data:", str(e))
     raise e
 
-# Step 5: Process and log data
+# Step 5: Process and append rows
 try:
     records = []
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -66,7 +67,7 @@ try:
             row = [timestamp, strike, ce_oi, ce_chg, pe_oi, pe_chg, underlying]
             records.append(row)
 
-    print(f"🧾 Prepared {len(records)} rows for logging.")
+    print(f"🧾 Prepared {len(records)} rows to log to Google Sheet...")
 
     for row in records:
         sheet.append_row(row)
