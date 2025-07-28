@@ -13,3 +13,15 @@ creds_dict = json.loads(creds_json)
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
+
+# Your existing code to fetch and process data
+# Example:
+for item in records:
+    # build your row as before
+    row = [timestamp, strike, ce_oi, ce_chg, pe_oi, pe_chg, underlying]
+    sheet.append_row(row)
+    print("📤 Row added to sheet:", row)  # ✅ This is good
+
+# Final confirmation log
+print("✅ Script completed and exited cleanly.")
+time.sleep(3)
