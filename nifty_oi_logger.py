@@ -32,6 +32,8 @@ except Exception as e:
     raise e
 
 # Step 4: Fetch NSE data using ScraperAPI
+import time
+
 print("🌐 Sending NSE request via ScraperAPI...")
 
 SCRAPER_API_KEY = os.environ.get("SCRAPER_API_KEY")
@@ -41,13 +43,24 @@ if not SCRAPER_API_KEY:
 nse_url = "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY"
 scraper_url = f"https://api.scraperapi.com/?api_key={SCRAPER_API_KEY}&url={nse_url}"
 
-try:
-    res = requests.get(scraper_url, timeout=15)
-    print("🌐 ScraperAPI Response Code:", res.status_code)
-    data = res.json()
-except Exception as e:
-    print("❌ Failed to fetch NSE data via ScraperAPI:", str(e))
-    raise e
+max_retries = 3
+retry_delay = 5  # seconds
+
+for attempt in range(1, max_retries + 1):
+    try:
+        print(f"🔁 Attempt {attempt}: Fetching data via ScraperAPI...")
+        res = requests.get(scraper_url, timeout=20)
+        print("🌐 ScraperAPI Response Code:", res.status_code)
+        data = res.json()
+        break  # Exit loop if successful
+    except requests.exceptions.ReadTimeout:
+        print(f"⏱ Timeout on attempt {attempt}. Retrying in {retry_delay}s...")
+        time.sleep(retry_delay)
+    except Exception as e:
+        print("❌ Failed to fetch NSE data via ScraperAPI:", str(e))
+        raise e
+else:
+    raise Exception("❌ All attempts to fetch NSE data via ScraperAPI failed due to timeout.")
 
 # Step 5: Process and append to Google Sheet
 try:
