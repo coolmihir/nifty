@@ -2,12 +2,15 @@
 import requests
 import json
 import gspread
+import os
+import json
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+creds_dict = json.loads(os.environ["GOOGLE_CREDS"])
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 sheet = client.open("NIFTY_OI_Logger").sheet1  # Rename as needed
 
