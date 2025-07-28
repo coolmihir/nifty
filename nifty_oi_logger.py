@@ -24,7 +24,7 @@ print("✅ Google Sheets authentication successful.")
 
 # Step 3: Open the spreadsheet using the sheet ID
 try:
-    sheet_id = "1ggCFYxVU1x3uU3eHYlmaQUn2m1rtNs9j"
+    sheet_id = "1POEQcuFy37AY0exoSxWPtAgcYAy8xZUNQidJ5A-5T_k"
     sheet = client.open_by_key(sheet_id).sheet1
     print("📄 Opened Google Sheet successfully.")
 except Exception as e:
