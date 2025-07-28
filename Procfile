@@ -1,1 +1,1 @@
-web: python app.py
+worker: python nifty_oi_logger.py
